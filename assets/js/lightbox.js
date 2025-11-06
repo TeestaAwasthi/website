@@ -9,7 +9,7 @@ function openLightbox(src, title, price, medium, size, year, available, desc){
   document.getElementById('lb-desc').textContent = desc || '';
   const subject = encodeURIComponent(`Enquiry: ${title}`);
   const body = encodeURIComponent(`Hi Teesta,\n\nI'm interested in "${title}".\n\nDetails:\n${bits}\n${price ? 'Price: ₹'+price : ''}\n\nLink/Image: ${location.origin+src}\n\nThanks!`);
-  document.getElementById('lb-email').href = `mailto:teesta.art@example.com?subject=${subject}&body=${body}`;
+  document.getElementById('lb-email').href = `mailto:teesta.awasthi@gmail.com?subject=${subject}&body=${body}`;
   lb.hidden = false;
   lb.onclick = (e)=>{ if(e.target.id==='lightbox'){ closeLightbox(); } };
 }
