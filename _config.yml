@@ -1,0 +1,12 @@
+title: ArtbyTeesta
+description: Original paintings by Teesta
+theme: null
+markdown: kramdown
+plugins: [] # keep GitHub Pages-compatible (no extra plugins)
+permalink: pretty
+collections: []
+exclude: [README.md]
+defaults:
+  - scope: {path: ""}
+    values:
+      layout: null
