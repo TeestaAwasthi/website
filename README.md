@@ -13,4 +13,4 @@ Settings → Pages → Build and deployment:
 - Source: **Deploy from a branch**
 - Branch: **main** and **/** (root)
 
-Your site will be available at `https://<your-username>.github.io/<repo>` or the custom domain you set.
+Your site will be available at `(https://teestaawasthi.github.io/website)` or the custom domain you set.
