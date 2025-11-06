@@ -4,6 +4,11 @@ permalink: /gallery/
 ---
 
 
+---
+# Keep this front matter so Jekyll processes the page
+permalink: /gallery/
+---
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -53,9 +58,9 @@ permalink: /gallery/
                    data-medium="{{ medium | downcase }}"
                    data-year="{{ year | downcase }}"
                    data-available="{{ available | downcase }}">
-            <button class="thumb" onclick="openLightbox('{{ f.path | escape }}','{{ title | escape }}','{{ price | escape }}','{{ medium | escape }}','{{ size | escape }}','{{ year | escape }}','{{ available | escape }}','{{ description | escape }}')">
-              <img loading="lazy" src="{{ f.path | escape }}" alt="{{ title | escape }}" />
-            </button>
+            <a class="thumb" href="{{ site.baseurl }}{{ f.path | escape }}" target="_blank" rel="noopener">
+              <img loading="lazy" src="{{ site.baseurl }}{{ f.path | escape }}" alt="{{ title | escape }}" />
+            </a>
             <div class="card-body">
               <h3>{{ title }}</h3>
               <p class="muted">
@@ -64,8 +69,13 @@ permalink: /gallery/
                 {% if year %} · {{ year }}{% endif %}
               </p>
               <p class="price">
-                {% if available == "sold" %}<span class="sold">Sold</span>
-                {% elsif price %}₹{{ price }}{% else %}<span class="inquire">Enquire</span>{% endif %}
+                {% if available == "sold" %}
+                  <span class="sold">Sold</span>
+                {% elsif price %}
+                  ₹{{ price }}
+                {% else %}
+                  <span class="muted">Available</span>
+                {% endif %}
               </p>
             </div>
           </article>
@@ -75,23 +85,6 @@ permalink: /gallery/
   </div>
 </main>
 
-<!-- Lightbox -->
-<div id="lightbox" class="lightbox" hidden>
-  <div class="lightbox-inner">
-    <button class="close" onclick="closeLightbox()">×</button>
-    <img id="lb-img" alt="" />
-    <div class="lb-meta">
-      <h3 id="lb-title"></h3>
-      <p id="lb-sub" class="muted"></p>
-      <div class="lb-actions">
-        <a id="lb-email" class="btn">Enquire</a>
-      </div>
-      <p id="lb-desc" class="muted"></p>
-    </div>
-  </div>
-</div>
-
-<script src="{{ site.baseurl }}/assets/js/lightbox.js"></script>
 <script>
   function filterCards(){
     var q = (document.getElementById('search').value || '').toLowerCase();
@@ -108,3 +101,4 @@ permalink: /gallery/
 </script>
 </body>
 </html>
+
