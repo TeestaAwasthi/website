@@ -10,3 +10,5 @@ defaults:
   - scope: {path: ""}
     values:
       layout: null
+url: "https://teestaawasthi.github.io"
+baseurl: "/website"
