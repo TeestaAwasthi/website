@@ -1,5 +1,5 @@
 ---
-# Jekyll front matter block (keeps pages processed)
+# Keep this front matter so Jekyll processes the page
 ---
 
 <!doctype html>
@@ -8,19 +8,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gallery · {{ site.title }}</title>
-  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/styles.css" />
 </head>
 <body>
 <header class="container header">
-  <h1><a href="/">ArtbyTeesta</a></h1>
+  <h1><a href="{{ site.baseurl }}/">ArtbyTeesta</a></h1>
   <nav>
-    <a href="/">Home</a>
-    <a class="active" href="/gallery.html">Gallery</a>
+    <a href="{{ site.baseurl }}/">Home</a>
+    <a class="active" href="{{ site.baseurl }}/gallery.html">Gallery</a>
   </nav>
 </header>
 
 <main class="container">
   <h2>Gallery</h2>
+
   <div class="filters">
     <input id="search" type="search" placeholder="Search title/medium/year…" oninput="filterCards()" />
     <select id="availability" onchange="filterCards()">
@@ -31,43 +32,43 @@
   </div>
 
   <div class="grid" id="grid">
-    {% assign pics = site.static_files
-      | where_exp: "f", "f.path contains '/paintings/'"
-      | where_exp: "f", "f.extname == '.jpg' or f.extname == '.jpeg' or f.extname == '.png' or f.extname == '.webp'"
-    %}
-
+    {% assign pics = site.static_files %}
     {% for f in pics %}
-      {% assign meta = site.data.paintings | where: "filename", f.name | first %}
-      {% assign title_guess = f.name | split: "." | first | replace: "-", " " | replace: "_", " " %}
-      {% assign title = meta.title | default: title_guess %}
-      {% assign price = meta.price | default: "" %}
-      {% assign medium = meta.medium | default: "" %}
-      {% assign size = meta.size | default: "" %}
-      {% assign year = meta.year | default: "" %}
-      {% assign available = meta.available | default: "available" %}
-      {% assign description = meta.description | default: "" %}
+      {% if f.path contains '/paintings/' %}
+        {% if f.extname == '.jpg' or f.extname == '.jpeg' or f.extname == '.png' or f.extname == '.webp' %}
+          {% assign meta = site.data.paintings | where: "filename", f.name | first %}
+          {% assign title_guess = f.name | split: "." | first | replace: "-", " " | replace: "_", " " %}
+          {% assign title = meta.title | default: title_guess %}
+          {% assign price = meta.price | default: "" %}
+          {% assign medium = meta.medium | default: "" %}
+          {% assign size = meta.size | default: "" %}
+          {% assign year = meta.year | default: "" %}
+          {% assign available = meta.available | default: "available" %}
+          {% assign description = meta.description | default: "" %}
 
-      <article class="card"
-               data-title="{{ title | downcase }}"
-               data-medium="{{ medium | downcase }}"
-               data-year="{{ year | downcase }}"
-               data-available="{{ available | downcase }}">
-        <button class="thumb" onclick="openLightbox('{{ f.path }}','{{ title | escape }}','{{ price | escape }}','{{ medium | escape }}','{{ size | escape }}','{{ year | escape }}','{{ available | escape }}','{{ description | escape }}')">
-          <img loading="lazy" src="{{ f.path }}" alt="{{ title | escape }}" />
-        </button>
-        <div class="card-body">
-          <h3>{{ title }}</h3>
-          <p class="muted">
-            {% if medium %}{{ medium }}{% endif %}
-            {% if size %} · {{ size }}{% endif %}
-            {% if year %} · {{ year }}{% endif %}
-          </p>
-          <p class="price">
-            {% if available == "sold" %}<span class="sold">Sold</span>
-            {% elsif price %}₹{{ price }}{% else %}<span class="inquire">Enquire</span>{% endif %}
-          </p>
-        </div>
-      </article>
+          <article class="card"
+                   data-title="{{ title | downcase }}"
+                   data-medium="{{ medium | downcase }}"
+                   data-year="{{ year | downcase }}"
+                   data-available="{{ available | downcase }}">
+            <button class="thumb" onclick="openLightbox('{{ f.path | escape }}','{{ title | escape }}','{{ price | escape }}','{{ medium | escape }}','{{ size | escape }}','{{ year | escape }}','{{ available | escape }}','{{ description | escape }}')">
+              <img loading="lazy" src="{{ f.path | escape }}" alt="{{ title | escape }}" />
+            </button>
+            <div class="card-body">
+              <h3>{{ title }}</h3>
+              <p class="muted">
+                {% if medium %}{{ medium }}{% endif %}
+                {% if size %} · {{ size }}{% endif %}
+                {% if year %} · {{ year }}{% endif %}
+              </p>
+              <p class="price">
+                {% if available == "sold" %}<span class="sold">Sold</span>
+                {% elsif price %}₹{{ price }}{% else %}<span class="inquire">Enquire</span>{% endif %}
+              </p>
+            </div>
+          </article>
+        {% endif %}
+      {% endif %}
     {% endfor %}
   </div>
 </main>
@@ -79,7 +80,7 @@
     <img id="lb-img" alt="" />
     <div class="lb-meta">
       <h3 id="lb-title"></h3>
-      <p id="lb-sub"></p>
+      <p id="lb-sub" class="muted"></p>
       <div class="lb-actions">
         <a id="lb-email" class="btn">Enquire</a>
       </div>
@@ -88,17 +89,19 @@
   </div>
 </div>
 
-<script src="/assets/js/lightbox.js"></script>
+<script src="{{ site.baseurl }}/assets/js/lightbox.js"></script>
 <script>
   function filterCards(){
-    const q = document.getElementById('search').value.toLowerCase();
-    const avail = document.getElementById('availability').value;
-    document.querySelectorAll('.card').forEach(c=>{
-      const hay = (c.dataset.title + ' ' + c.dataset.medium + ' ' + c.dataset.year).toLowerCase();
-      const okText = !q || hay.includes(q);
-      const okAvail = !avail || c.dataset.available === avail;
+    var q = (document.getElementById('search').value || '').toLowerCase();
+    var avail = document.getElementById('availability').value;
+    var cards = document.querySelectorAll('.card');
+    for (var i = 0; i < cards.length; i++){
+      var c = cards[i];
+      var hay = (c.dataset.title + ' ' + c.dataset.medium + ' ' + c.dataset.year).toLowerCase();
+      var okText = !q || hay.indexOf(q) !== -1;
+      var okAvail = !avail || (c.dataset.available === avail);
       c.style.display = (okText && okAvail) ? '' : 'none';
-    });
+    }
   }
 </script>
 </body>
