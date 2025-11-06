@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ site.title }}</title>
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+</head>
+<body>
+  <header class="container header">
+    <h1>ArtbyTeesta</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main class="container hero">
+    <div>
+      <h2>Original Paintings by Teesta</h2>
+      <p>Browse the latest artwork. New pieces appear the moment we upload photos.</p>
+      <p><a class="btn" href="/gallery.html">View the Gallery</a></p>
+    </div>
+    <div class="hero-card">
+      <p>How to buy</p>
+      <ul>
+        <li>Open a painting in the gallery</li>
+        <li>Click <strong>Enquire</strong> to email with the artwork details pre-filled</li>
+      </ul>
+    </div>
+  </main>
+
+  <section id="contact" class="container contact">
+    <h3>Contact</h3>
+    <p>Email: <a href="mailto:teesta.art@example.com">teesta.art@example.com</a></p>
+    <!-- Add your Instagram or other socials -->
+    <!-- <p>Instagram: <a href="https://instagram.com/yourhandle">@yourhandle</a></p> -->
+  </section>
+
+  <footer class="container footer">
+    <small>© <span id="y"></span> ArtbyTeesta</small>
+  </footer>
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
