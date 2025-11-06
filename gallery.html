@@ -1,11 +1,4 @@
 ---
-# Keep this front matter so Jekyll processes the page
-permalink: /gallery/
----
-
-
----
-# Keep this front matter so Jekyll processes the page
 permalink: /gallery/
 ---
 
@@ -41,8 +34,8 @@ permalink: /gallery/
   <div class="grid" id="grid">
     {% assign pics = site.static_files %}
     {% for f in pics %}
-      {% if f.path contains '/paintings/' %}
-        {% if f.extname == '.jpg' or f.extname == '.jpeg' or f.extname == '.png' or f.extname == '.webp' %}
+      {% if f.path contains "/paintings/" %}
+        {% if f.extname == ".jpg" or f.extname == ".jpeg" or f.extname == ".png" or f.extname == ".webp" %}
           {% assign meta = site.data.paintings | where: "filename", f.name | first %}
           {% assign title_guess = f.name | split: "." | first | replace: "-", " " | replace: "_", " " %}
           {% assign title = meta.title | default: title_guess %}
@@ -77,6 +70,9 @@ permalink: /gallery/
                   <span class="muted">Available</span>
                 {% endif %}
               </p>
+              {% if description %}
+                <p class="muted">{{ description }}</p>
+              {% endif %}
             </div>
           </article>
         {% endif %}
@@ -101,4 +97,3 @@ permalink: /gallery/
 </script>
 </body>
 </html>
-
