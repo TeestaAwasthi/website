@@ -1,48 +1,152 @@
+---
+# Jekyll needs front matter to process baseurl etc.
+---
+
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ site.title }}</title>
-  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <title>{{ site.title }} — Original Paintings</title>
+  <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/styles.css" />
+  <style>
+    /* --- homepage-only cosmetic tweaks --- */
+    .topbar{display:flex;align-items:center;gap:1rem;padding:.75rem 0;border-bottom:1px solid #eee}
+    .topbar .brand{font-weight:800;font-size:1.3rem;letter-spacing:.3px}
+    .searchbar{flex:1;display:flex;gap:.5rem}
+    .searchbar input{flex:1;padding:.55rem .8rem;border:1px solid #ddd;border-radius:999px}
+    .searchbar button{border:0;padding:.55rem 1rem;border-radius:999px;background:var(--accent);color:#fff;cursor:pointer}
+    .menubar{display:flex;gap:1rem;flex-wrap:wrap}
+    .menubar a{color:var(--muted)}
+    .hero-lg{position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(135deg,#f8f5ff, #f1fbff);padding:3rem 2rem;margin:1.25rem 0}
+    .hero-lg h1{font-size:clamp(1.6rem,3.2vw,2.6rem);line-height:1.1;margin:0 0 .6rem}
+    .hero-lg p{margin:0 0 1rem;color:#444}
+    .hero-lg .cta{display:flex;gap:.5rem;flex-wrap:wrap}
+    .pill{background:#fff;border:1px solid #eee;border-radius:999px;padding:.45rem .9rem;color:#333}
+    .section-head{display:flex;align-items:baseline;justify-content:space-between;margin:1.25rem 0 .5rem}
+    .section-head h2{font-size:1.25rem;margin:0}
+    .hscroll{display:flex;gap:.75rem;overflow:auto;padding-bottom:.4rem;scroll-snap-type:x proximity}
+    .hscroll .card{min-width:220px;scroll-snap-align:start}
+    .grid-4{display:grid;gap:var(--gap);grid-template-columns:repeat(4,1fr)}
+    @media (max-width:1100px){.grid-4{grid-template-columns:repeat(3,1fr)}}
+    @media (max-width:800px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+    .chipbar{display:flex;gap:.5rem;flex-wrap:wrap;margin:.25rem 0 1rem}
+    .chip{border:1px solid #ddd;border-radius:999px;padding:.35rem .8rem;background:#fff;cursor:pointer}
+    .subtle-link{font-size:.95rem}
+  </style>
 </head>
 <body>
-  <header class="container header">
-    <h1>ArtbyTeesta</h1>
-    <nav>
-      <a href="/">Home</a>
-      <a href="{{ site.baseurl }}/gallery/">Gallery</a>
-      <a href="#contact">Contact</a>
+
+<header class="container">
+  <div class="topbar">
+    <div class="brand"><a href="{{ site.baseurl }}/">ArtbyTeesta</a></div>
+    <form class="searchbar" action="{{ site.baseurl }}/gallery/">
+      <input id="q" name="q" type="search" placeholder="Search artworks (title, medium, year) …" />
+      <button type="submit">Search</button>
+    </form>
+    <nav class="menubar">
+      <a href="{{ site.baseurl }}/gallery/">All Art</a>
+      <a href="{{ site.baseurl }}/gallery/?q=abstract">Abstract</a>
+      <a href="{{ site.baseurl }}/gallery/?q=landscape">Landscape</a>
+      <a href="{{ site.baseurl }}/gallery/?q=portrait">Portrait</a>
     </nav>
-  </header>
+  </div>
+</header>
 
-  <main class="container hero">
-    <div>
-      <h2>Original Paintings by Teesta</h2>
-      <p>Browse the latest artwork. New pieces appear the moment we upload photos.</p>
-      <p><a class="btn" href="{{ site.baseurl }}/gallery/">View the Gallery</a></p>
+<main class="container">
+  <!-- Hero -->
+  <section class="hero-lg">
+    <h1>Buy Original Art Direct from the Artist</h1>
+    <p>Discover new works by Teesta. Fresh paintings appear the moment we upload them.</p>
+    <div class="cta">
+      <a class="btn" href="{{ site.baseurl }}/gallery/">Shop All Art</a>
+      <a class="pill" href="{{ site.baseurl }}/gallery/?q=new">New This Week</a>
+      <a class="pill" href="{{ site.baseurl }}/gallery/?q=sold">Recently Sold</a>
     </div>
-    <div class="hero-card">
-      <p>How to buy</p>
-      <ul>
-        <li>Open a painting in the gallery</li>
-        <li>Click <strong>Enquire</strong> to email with the artwork details pre-filled</li>
-      </ul>
-    </div>
-  </main>
-
-  <section id="contact" class="container contact">
-    <h3>Contact</h3>
-    <p>Email: <a href="mailto:teesta.awasthi@gmail.com">teesta.awasthi@gmail.com</a></p>
-    <!-- Add your Instagram or other socials -->
-    <!-- <p>Instagram: <a href="https://instagram.com/yourhandle">@yourhandle</a></p> -->
   </section>
 
-  <footer class="container footer">
-    <small>© <span id="y"></span> ArtbyTeesta</small>
-  </footer>
-  <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-  </script>
+  <!-- Featured (driven by _data/paintings with featured: true; falls back if none) -->
+  <section>
+    <div class="section-head">
+      <h2>Featured Originals</h2>
+      <a class="subtle-link" href="{{ site.baseurl }}/gallery/?q=featured">View more</a>
+    </div>
+    <div class="hscroll">
+      {% assign pics = site.static_files %}
+      {% assign shown = 0 %}
+      {% for f in pics %}
+        {% if f.path contains "/paintings/" %}
+          {% if f.extname == ".jpg" or f.extname == ".jpeg" or f.extname == ".png" or f.extname == ".webp" %}
+            {% assign meta = site.data.paintings | where: "filename", f.name | first %}
+            {% assign featured = meta.featured | default: "" %}
+            {% if featured == true or featured == "true" %}
+              {% assign title_guess = f.name | split: "." | first | replace: "-", " " | replace: "_", " " %}
+              {% assign title = meta.title | default: title_guess %}
+              {% assign price = meta.price | default: "" %}
+              {% include_relative _partials/thumb_card.html fpath=f.path title=title price=price %}
+              {% assign shown = shown | plus: 1 %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      {% if shown == 0 %}
+        {%- comment -%} No featured flags yet → show first 6 as fallback {%- endcomment -%}
+        {% assign count = 0 %}
+        {% for f in pics %}
+          {% if f.path contains "/paintings/" and (f.extname == ".jpg" or f.extname == ".jpeg" or f.extname == ".png" or f.extname == ".webp") %}
+            {% assign meta = site.data.paintings | where: "filename", f.name | first %}
+            {% assign title_guess = f.name | split: "." | first | replace: "-", " " | replace: "_", " " %}
+            {% assign title = meta.title | default: title_guess %}
+            {% assign price = meta.price | default: "" %}
+            {% include_relative _partials/thumb_card.html fpath=f.path title=title price=price %}
+            {% assign count = count | plus: 1 %}
+            {% if count >= 6 %}{% break %}{% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- New Arrivals -->
+  <section>
+    <div class="section-head">
+      <h2>New This Week</h2>
+      <a class="subtle-link" href="{{ site.baseurl }}/gallery/?q=new">See all</a>
+    </div>
+    <div class="grid-4">
+      {% assign count2 = 0 %}
+      {% for f in pics reversed %}
+        {% if f.path contains "/paintings/" and (f.extname == ".jpg" or f.extname == ".jpeg" or f.extname == ".png" or f.extname == ".webp") %}
+          {% assign meta = site.data.paintings | where: "filename", f.name | first %}
+          {% assign title_guess = f.name | split: "." | first | replace: "-", " " | replace: "_", " " %}
+          {% assign title = meta.title | default: title_guess %}
+          {% assign price = meta.price | default: "" %}
+          {% include_relative _partials/thumb_card.html fpath=f.path title=title price=price %}
+          {% assign count2 = count2 | plus: 1 %}
+          {% if count2 >= 8 %}{% break %}{% endif %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Shop by Style (chips that jump to filtered gallery) -->
+  <section>
+    <div class="section-head"><h2>Shop by Style</h2></div>
+    <div class="chipbar">
+      <a class="chip" href="{{ site.baseurl }}/gallery/?q=abstract">Abstract</a>
+      <a class="chip" href="{{ site.baseurl }}/gallery/?q=landscape">Landscape</a>
+      <a class="chip" href="{{ site.baseurl }}/gallery/?q=figurative">Figurative</a>
+      <a class="chip" href="{{ site.baseurl }}/gallery/?q=floral">Floral</a>
+      <a class="chip" href="{{ site.baseurl }}/gallery/?q=monochrome">Monochrome</a>
+      <a class="chip" href="{{ site.baseurl }}/gallery/?q=palette%20knife">Palette Knife</a>
+    </div>
+  </section>
+</main>
+
+<footer class="container footer">
+  <small>© <span id="y"></span> ArtbyTeesta · All rights reserved</small>
+</footer>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
 </body>
 </html>
