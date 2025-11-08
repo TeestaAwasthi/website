@@ -1,0 +1,9 @@
+<article class="card">
+  <a class="thumb" href="{{ site.baseurl }}{{ include.fpath | escape }}" target="_blank" rel="noopener">
+    <img loading="lazy" src="{{ site.baseurl }}{{ include.fpath | escape }}" alt="{{ include.title | escape }}" />
+  </a>
+  <div class="card-body">
+    <h3>{{ include.title }}</h3>
+    <p class="price">{% if include.price %}₹{{ include.price }}{% else %}<span class="muted">Available</span>{% endif %}</p>
+  </div>
+</article>
